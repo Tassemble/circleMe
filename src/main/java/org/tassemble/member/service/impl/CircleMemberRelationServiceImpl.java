@@ -2,11 +2,11 @@ package org.tassemble.member.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import org.tassemble.base.commons.service.impl.BaseServiceImpl;
 import org.tassemble.member.dao.CircleMemberRelationDao;
 import org.tassemble.member.domain.CircleMemberRelation;
 import org.tassemble.member.service.CircleMemberRelationService;
+
+import com.game.base.commons.service.impl.BaseServiceImpl;
 
 
 @Service
