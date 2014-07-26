@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans default-autowire="byName" default-lazy-init="false">
+
+
+	<bean id="dbPropertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:db.properties</value>
+			</list>
+		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+
+	<bean id="mysqlDataSource" class="com.netease.dbsupport.impl.ConnectionManagerMysqlImpl"
+		init-method="init">
+		<property name="url">
+			<value>${mysql.url}</value>
+		</property>
+		<property name="user">
+			<value>${mysql.user}</value>
+		</property>
+		<property name="pass">
+		<value>${mysql.pass}</value>
+		</property>
+		<property name="initialSize">
+			<value>${mysql.initialSize}</value>
+		</property>
+		<!-- 设置最大空闲连接 -->
+		<property name="maxIdle">
+			<value>
+			${mysql.maxIdle}
+			</value>
+		</property>
+		<!-- 设置最小空闲连接 -->
+		<property name="minIdle">
+			<value>
+			${mysql.minIdle}
+			</value>
+		</property>
+		<!-- 设置最大连接数量 -->
+		<property name="maxActive">
+			<value>
+			${mysql.maxActive}
+			</value>
+		</property>
+		
+		
+		
+	</bean>
+
+
+	<bean id="mysqlTransactionManagerAdapter"
+		class="com.game.base.commons.dao.transaction.MysqlTransactionManagerAdapter">
+	</bean>
+
+	<bean id="runtimeStatCounter" class="com.netease.framework.stat.RuntimeStatCounterImpl">
+	</bean>
+
+	<bean id="sqlManager" class="com.game.base.commons.dao.sql.SqlManagerEduProxy">
+		<property name="connectionPool">
+			<ref bean="mysqlDataSource" />
+		</property>
+		<property name="transactionManager">
+			<ref bean="mysqlTransactionManagerAdapter" />
+		</property>
+		<property name="runtimeStatCounter">
+			<ref bean="runtimeStatCounter" />
+		</property>
+	</bean>
+
+	<bean id="circleDaoBase" class="com.netease.framework.dao.sql.AbstractDaoSqlBase"
+		abstract="true">
+		<property name="sqlManager">
+			<ref bean="sqlManager" />
+		</property>
+	</bean>
+
+</beans>

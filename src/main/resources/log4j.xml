@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p [%t] %c{1}.%M(%L) | %m%n" />
+		</layout>
+		<param name="threshold" value="info" />
+	</appender>
+
+	<appender name="DailyRollingFile" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="threshold" value="info" />
+		<param name="file" value="logs/default.log" />
+		<param name="append" value="true" />
+		<param name="datePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p [%t] %c{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="game_appender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="threshold" value="debug" />
+		<param name="file" value="logs/game/game.log" />
+		<param name="append" value="true" />
+		<param name="datePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p [%t] %c{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>
+	
+	
+	
+	<appender name="transaction_appender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="threshold" value="debug" />
+		<param name="file" value="logs/transaction/transaction.log" />
+		<param name="append" value="true" />
+		<param name="datePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p [%t] %c{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="transaction" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="transaction_appender" />
+	</logger>
+	
+	
+
+	<logger name="com.game" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="game_appender" />
+	</logger>
+
+
+	<root>
+		<level value="info" />
+		<appender-ref ref="game_appender" />
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+</log4j:configuration>

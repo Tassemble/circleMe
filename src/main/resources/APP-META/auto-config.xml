@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<app>
+<configures>
+	<configure source="db.properties.ftl" target="src/main/resources/db.properties"/>
+	<configure source="log4j.xml.ftl" target="src/main/resources/log4j.xml"/>
+	<configure source="remote.properties.ftl" target="src/main/resources/remote.properties"/>
+	<configure source="midware.properties.ftl" target="src/main/resources/midware.properties"/>
+    <configure source="local.file.properties.ftl" target="src/main/resources/local.file.properties"/>
+    <configure source="nos-credentials.properties.ftl" target="src/main/resources/nos-credentials.properties"/>
+</configures>
+</app>
+
+
