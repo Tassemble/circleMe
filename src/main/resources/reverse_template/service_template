@@ -1,0 +1,8 @@
+package ${package}.service;
+
+import org.tassemble.base.commons.service.BaseService;
+import ${package}.domain.${domainClass};
+
+public interface ${domainClass}Service extends BaseService<${domainClass}> {
+
+}

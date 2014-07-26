@@ -612,6 +612,40 @@ public class CommonProcessor implements ActionAnotationProcessor {
 			return null;
 		}
 	}
+	
+	@ActionAnnotation(action = "queryPeopleAroundMe")
+    public Map<String, Object> queryPeopleAroundMe(Object message, Map<String, Object> map) {
+	    
+	   
+	    
+	    return null;
+	}
+	
+	@ActionAnnotation(action = "uploadGeoInfo")
+    public Map<String, Object> uploadGeoInfo(Object message, Map<String, Object> map) {
+	    
+        
+	    return null;
+    }
+	
+	
+	@ActionAnnotation(action = "markColor")
+    public Map<String, Object> markColor(Object message, Map<String, Object> map) {
+        
+        
+	    return null;
+    }
+
+	@ActionAnnotation(action = "userMove")
+    public Map<String, Object> userMove(Object message, Map<String, Object> map) {
+        
+        
+	    return null;
+    }
+	
+	
+	
+	
 
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException, JSONException {
 
@@ -634,5 +668,9 @@ public class CommonProcessor implements ActionAnotationProcessor {
 //		System.out.println(o.get("a"));
 
 	}
+	
+	
+	
+	
 
 }

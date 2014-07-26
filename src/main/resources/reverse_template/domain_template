@@ -1,0 +1,12 @@
+package ${package}.domain;
+
+import com.netease.framework.dao.sql.annotation.DataProperty;
+import java.math.BigDecimal;
+
+public class ${domainClass} {
+
+private static final long serialVersionUID = 1L;
+
+${detail}
+
+}

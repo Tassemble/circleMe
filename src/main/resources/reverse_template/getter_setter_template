@@ -1,0 +1,9 @@
+	
+	public void set${fieldWithUpperFirstChar}(${type} ${field}) {
+		this.${field} = ${field};
+	}
+	
+	@DataProperty(column = "${column}")	
+	public ${type} get${fieldWithUpperFirstChar}() {
+		return ${field};
+	}	

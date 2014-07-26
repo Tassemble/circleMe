@@ -1,0 +1,26 @@
+package ${package}.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import org.tassemble.base.commons.service.impl.BaseServiceImpl;
+import ${package}.dao.${domainClass}Dao;
+import ${package}.domain.${domainClass};
+import ${package}.service.${domainClass}Service;
+
+
+@Service
+public class ${domainClass}ServiceImpl extends BaseServiceImpl<${domainClass}Dao, ${domainClass}> implements ${domainClass}Service {
+	private ${domainClass}Dao dao;
+
+    public ${domainClass}Dao getDao() {
+        return dao;
+    }
+
+    @Autowired
+    public void set${domainClass}Dao(${domainClass}Dao dao) {
+        super.setBaseDao(dao);
+        this.dao = dao;
+    }
+    
+}

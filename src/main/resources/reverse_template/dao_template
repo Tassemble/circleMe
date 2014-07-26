@@ -1,0 +1,8 @@
+package ${package}.dao;
+
+import org.tassemble.base.commons.dao.BaseDao;
+import ${package}.domain.${domainClass};
+
+public interface ${domainClass}Dao extends BaseDao<${domainClass}> {
+
+}
