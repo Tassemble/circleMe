@@ -652,7 +652,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
     }
 	
 	@ActionAnnotation(action = "queryPeopleAroundMe")
-    public void queryPeopleAroundMe(Object message, Map<String, Object> map) throws Exception {
+    public String queryPeopleAroundMe(Object message, Map<String, Object> map) throws Exception {
 	    
 	    
 	    HashMap<Object, Object> parameters = mapper.readValue(String.valueOf(message), HashMap.class);
@@ -704,7 +704,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
         
         if (StringUtils.isBlank(results)) {
             map.put("pointsList", CollectionUtils.EMPTY_COLLECTION);
-            return;
+            return ReturnConstant.OK;
         }
         
         
@@ -728,7 +728,10 @@ public class CommonProcessor implements ActionAnotationProcessor {
                 //k < 0 第二第四象限  如果y点比中心点的y大 则 为第二象限，否则是第四象限
                 double y2 = circlePoint.getCoordinate().getLatitude();
                 double x2 = circlePoint.getCoordinate().getLongitude();
-                double k = (y1 - y2) / (x1 - x2);
+                double k = 0;
+                if (Math.abs(x1 - x2) > 0) {
+                    k = (y1 - y2) / (x1 - x2);
+                } 
                 
                 double angle = 0;
                 if (k >= 0) {
@@ -750,7 +753,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
         }
         
         map.put("pointsList", points);
-	    return;
+	    return ReturnConstant.OK;
 	}
 	@Autowired
 	CellLocker<String> locker;
