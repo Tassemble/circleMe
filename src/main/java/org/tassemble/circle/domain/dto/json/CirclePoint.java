@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName;
 public class CirclePoint {
 
     Double     dis;
-
+    private Double     degree;
+    
     @SerializedName("coordinate")
     Coordinate coordinate;
 
@@ -47,6 +48,15 @@ public class CirclePoint {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public Double getDegree() {
+        return degree;
+    }
+
+
+    public void setDegree(Double degree) {
+        this.degree = degree;
     }
 
     public static class MemberInfo {

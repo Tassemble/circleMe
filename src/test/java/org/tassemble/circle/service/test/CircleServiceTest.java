@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.game.base.dao.BaseTestCase;
-import com.game.utils.GsonUtils;
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DBObject;
@@ -41,4 +40,6 @@ public class CircleServiceTest extends BaseTestCase{
         
 //        System.out.println(GsonUtils.toJson(result));
     }
+    
+    
 }

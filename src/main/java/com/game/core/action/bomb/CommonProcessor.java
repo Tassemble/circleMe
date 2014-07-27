@@ -51,6 +51,7 @@ import com.game.core.exception.ActionFailedException;
 import com.game.core.exception.BombException;
 import com.game.core.exception.MessageNullException;
 import com.game.core.exception.NoAuthenticationException;
+import com.game.core.utils.CellLocker;
 import com.game.utils.GsonUtils;
 import com.game.utils.HttpClientUtils;
 import com.google.common.collect.Lists;
@@ -708,17 +709,79 @@ public class CommonProcessor implements ActionAnotationProcessor {
         
         
         List<CirclePoint> points = GsonUtils.fromJson(results, new TypeToken<List<CirclePoint>>(){}.getType());
+        
+        
+        if (CollectionUtils.isNotEmpty(points)) {
+            //point.getCoordinate().getLongitude(), point.getCoordinate().getLatitude()
+            
+            
+            //circle point
+            double longitude = point.getCoordinate().getLongitude();
+            double latitude = point.getCoordinate().getLatitude();
+            
+            double y1 = latitude;
+            double x1 = longitude;
+            
+            
+            for (CirclePoint circlePoint : points) {
+                //k > 0  第一第三象限 如果y点比中心点的y大 则 为第一象限，否则是第三象限
+                //k < 0 第二第四象限  如果y点比中心点的y大 则 为第二象限，否则是第四象限
+                double y2 = circlePoint.getCoordinate().getLatitude();
+                double x2 = circlePoint.getCoordinate().getLongitude();
+                double k = (y1 - y2) / (x1 - x2);
+                
+                double angle = 0;
+                if (k >= 0) {
+                    if (y2 - y1 >= 0) {
+                        angle = k * 180d / Math.PI;
+                    } else {
+                        angle = k * 180d / Math.PI + 180;
+                    }
+                } else {
+                    if (y2 - y1 >= 0) {
+                        angle = 180 + k * 180d / Math.PI;
+                    } else {
+                        angle = 360 + k * 180d / Math.PI;
+                    }
+                }
+                circlePoint.setDegree(angle);
+            }
+            
+        }
+        
         map.put("pointsList", points);
 	    return;
 	}
+	@Autowired
+	CellLocker<String> locker;
+	
 	
 	@ActionAnnotation(action = "uploadGeoInfo")
-    public Map<String, Object> uploadGeoInfo(Object message, Map<String, Object> map) throws Exception {
+    public String uploadGeoInfo(Object message, Map<String, Object> map) throws Exception {
+	    Long uid = GameMemory.getUser().getId();
+	    
+	    final int UPDATE_LIMIT_IN_SECONDS = 2; 
+	    
+	    String key = "updateGeoInfo_" + uid;
+	    try {
+    	    locker.lock("",  key);
+    	    //每个用户限制为每秒一次上传机会，超过了丢弃
+    	    Long expireTime = GameMemory.locationUpdate.get(uid);
+    	    if (expireTime < System.currentTimeMillis()) {
+    	        //please exec
+    	        //update expireTime
+    	        expireTime = System.currentTimeMillis() + UPDATE_LIMIT_IN_SECONDS * 1000;
+    	        GameMemory.locationUpdate.put(uid, expireTime);
+    	    } else {
+    	        //reject it;
+    	        return ReturnConstant.OK;
+    	    }
+    	    
+	    } finally {
+	        locker.unLock("", key);
+	    }
 	    
 	    HashMap<Object, Object> parameters = mapper.readValue(String.valueOf(message), HashMap.class);
-        
-        
-        
         Object longitudeObj = parameters.get("longitude");
         Object latitudeObj = parameters.get("latitude");
         
@@ -727,10 +790,19 @@ public class CommonProcessor implements ActionAnotationProcessor {
         }
         
         
+        updateUserLocation(uid, longitudeObj, latitudeObj);
+        
+        return ReturnConstant.OK;
+    }
+
+
+
+
+    private void updateUserLocation(Long uid, Object longitudeObj, Object latitudeObj) {
         double longitude = Double.valueOf(String.valueOf(longitudeObj));
         double latitude = Double.valueOf(String.valueOf(latitudeObj));
         DBObject query = new BasicDBObject();
-        query.put("member_id", GameMemory.getUser().getId());
+        query.put("member_id", uid);
         
         DBCursor cursor = getDefaultCollection().find(query);
         if (cursor.iterator().hasNext()) {
@@ -745,8 +817,6 @@ public class CommonProcessor implements ActionAnotationProcessor {
             object.put("member_id",GameMemory.getUser().getId());
             getDefaultCollection().insert(object);
         }
-        
-	    return null;
     }
 	
 	
@@ -759,7 +829,11 @@ public class CommonProcessor implements ActionAnotationProcessor {
 
 	@ActionAnnotation(action = "userMove")
     public Map<String, Object> userMove(Object message, Map<String, Object> map) {
-        
+        //最大30公里
+	    //
+	    
+	    
+	    
         
 	    return null;
     }

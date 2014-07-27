@@ -23,6 +23,9 @@ public class GameMemory {
 	public static final String CONTEXT_NAME = "ctx";
 	
 	static final int MAX_PLAYERS = 5000;
+	
+	
+	public static Map<Long, Long> locationUpdate = new ConcurrentHashMap<Long, Long>();
 
 	public static Map<Long, OnlineUserDto> SESSION_USERS;
 	
