@@ -84,6 +84,8 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	@Autowired
 	RoomLogic roomLogic;
 	
+    @Autowired
+    CellLocker<String>          locker;
 	
 	static ObjectMapper mapper = new ObjectMapper();
 	
@@ -653,7 +655,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	
 	@ActionAnnotation(action = "queryPeopleAroundMe")
     public String queryPeopleAroundMe(Object message, Map<String, Object> map) throws Exception {
-	    
+	    map.put("action", "queryPeopleAroundMe");
 	    
 	    HashMap<Object, Object> parameters = mapper.readValue(String.valueOf(message), HashMap.class);
 	    
@@ -755,9 +757,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
         map.put("pointsList", points);
 	    return ReturnConstant.OK;
 	}
-	@Autowired
-	CellLocker<String> locker;
-	
+
 	
 	@ActionAnnotation(action = "uploadGeoInfo")
     public String uploadGeoInfo(Object message, Map<String, Object> map) throws Exception {
@@ -770,7 +770,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
     	    locker.lock("",  key);
     	    //每个用户限制为每秒一次上传机会，超过了丢弃
     	    Long expireTime = GameMemory.locationUpdate.get(uid);
-    	    if (expireTime < System.currentTimeMillis()) {
+    	    if (expireTime == null || expireTime < System.currentTimeMillis()) {
     	        //please exec
     	        //update expireTime
     	        expireTime = System.currentTimeMillis() + UPDATE_LIMIT_IN_SECONDS * 1000;
