@@ -34,6 +34,9 @@ public class OnlineUserDto {
 	Long				gold;
 	private String inUse;
 	transient IoSession session;
+	private Integer sex;
+	
+	
 	
 	
 	private transient TimeoutTaskWrapper timeoutTask;
@@ -234,6 +237,14 @@ public class OnlineUserDto {
 	public void setTimeoutTask(TimeoutTaskWrapper timeoutTask) {
 		this.timeoutTask = timeoutTask;
 	}
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
+    }
 
 
 	

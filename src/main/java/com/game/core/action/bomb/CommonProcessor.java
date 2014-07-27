@@ -1,8 +1,10 @@
 package com.game.core.action.bomb;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,11 +19,13 @@ import org.apache.commons.lang.math.RandomUtils;
 import org.apache.mina.core.session.IoSession;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jettison.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.tassemble.circle.domain.dto.json.CirclePoint;
 
 import com.game.base.commons.utils.collection.FieldComparator;
 import com.game.base.commons.utils.text.JsonUtils;
@@ -50,6 +54,13 @@ import com.game.core.exception.NoAuthenticationException;
 import com.game.utils.GsonUtils;
 import com.game.utils.HttpClientUtils;
 import com.google.common.collect.Lists;
+import com.google.gson.reflect.TypeToken;
+import com.mongodb.BasicDBObject;
+import com.mongodb.CommandResult;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 @Component
@@ -71,6 +82,11 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	
 	@Autowired
 	RoomLogic roomLogic;
+	
+	
+	static ObjectMapper mapper = new ObjectMapper();
+	
+	
 
 	private static final Logger	LOG			= LoggerFactory.getLogger(CommonProcessor.class);
 	private static final Logger	LOG_TRADE			= LoggerFactory.getLogger("transaction");
@@ -617,17 +633,95 @@ public class CommonProcessor implements ActionAnotationProcessor {
 		}
 	}
 	
+	
+	
+	public DBCollection getDefaultCollection() {
+	    DB db = mongoClient.getDB("yound");
+        DBCollection collction = db.getCollection("ss");
+        
+        return collction;
+	}
+	
+	
+	
+	public DB getDefaultDB() {
+        DB db = mongoClient.getDB("yound");
+        
+        return db;
+    }
+	
 	@ActionAnnotation(action = "queryPeopleAroundMe")
-    public Map<String, Object> queryPeopleAroundMe(Object message, Map<String, Object> map) {
+    public void queryPeopleAroundMe(Object message, Map<String, Object> map) throws Exception {
 	    
-	   
 	    
-	    return null;
+	    HashMap<Object, Object> parameters = mapper.readValue(String.valueOf(message), HashMap.class);
+	    
+	    
+	    
+	    Double longitude = (Double)parameters.get("longitude");
+	    Double latitude = (Double)parameters.get("latitude");
+	    Double meter= (Double)parameters.get("meter");
+	    Boolean onlyfFriend = (Boolean)parameters.get("onlyfFriend");
+	    
+	    
+	    if (longitude == null || latitude == null || meter == null) {
+	        throw new BombException(-1, "one of them[longitude, latitude, meter] is null, please check");
+	    }
+	    
+	    DBObject dbObject = new BasicDBObject();
+        dbObject.put("geoNear", "location");
+        dbObject.put("near", Arrays.asList(longitude, latitude));
+        dbObject.put("spherical", "true");
+        dbObject.put("maxDistance", meter / 1000);
+        dbObject.put("distanceMultiplier", 6371000);
+        
+        
+	    
+        CommandResult result = getDefaultDB().command(dbObject);
+        
+        String results = result.getString("results");
+        
+        if (StringUtils.isBlank(results)) {
+            map.put("pointsList", CollectionUtils.EMPTY_COLLECTION);
+            return;
+        }
+        
+        
+        List<CirclePoint> points = GsonUtils.fromJson(results, new TypeToken<List<CirclePoint>>(){}.getType());
+        map.put("pointsList", points);
+	    return;
 	}
 	
 	@ActionAnnotation(action = "uploadGeoInfo")
-    public Map<String, Object> uploadGeoInfo(Object message, Map<String, Object> map) {
+    public Map<String, Object> uploadGeoInfo(Object message, Map<String, Object> map) throws Exception {
 	    
+	    HashMap<Object, Object> parameters = mapper.readValue(String.valueOf(message), HashMap.class);
+        
+        
+        
+        Double longitude = (Double)parameters.get("longitude");
+        Double latitude = (Double)parameters.get("latitude");
+        
+        if (longitude == null || latitude == null) {
+            throw new BombException(-1, "one of them[longitude, latitude] is null, please check");
+        }
+        
+        DBObject query = new BasicDBObject();
+        query.put("member_id", GameMemory.getUser().getId());
+        
+        DBCursor cursor = getDefaultCollection().find(query);
+        if (cursor.iterator().hasNext()) {
+            DBObject object = new BasicDBObject();
+            object.put("longitude", longitude);
+            object.put("latitude", latitude);
+            getDefaultCollection().update(query, object);
+        } else {
+            DBObject object = new BasicDBObject();
+            object.put("longitude", longitude);
+            object.put("latitude", latitude);
+            object.put("member_id",GameMemory.getUser().getId());
+            getDefaultCollection().insert(object);
+        }
         
 	    return null;
     }

@@ -221,15 +221,7 @@ public class AuthIoFilter extends IoFilterAdapter {
 				
 				signUpData.setLoginType(loginType);
 				
-				
-				Member member = new Member();
-				member.setGmtCreate(System.currentTimeMillis());
-				member.setGmtModified(System.currentTimeMillis());
-				member.setLoginType(signUpData.getLoginType());
-				member.setNickname(signUpData.getNickname());
-				member.setPassword(DigestUtils.md5Hex(signUpData.getPassword()));
-				member.setUsername(signUpData.getUsername());
-				memberService.add(member);
+				memberService.addNewUser(signUpData);
 				users = memberService.getByDomainObjectSelective(query); //query again
 				OnlineUserDto dto = new OnlineUserDto(users.get(0));
 				dto.setStatus(OnlineUserDto.STATUS_ONLINE);

@@ -5,5 +5,5 @@ verifyRecetptUrl=https://buy.itunes.apple.com/verifyReceipt
 
 #mongo
 mongo_host=127.0.0.1
-mongo_port=22017
+mongo_port=27017
 

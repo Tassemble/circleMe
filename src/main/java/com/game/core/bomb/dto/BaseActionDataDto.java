@@ -81,6 +81,8 @@ public class BaseActionDataDto {
 		private String	nickname;
 		private String	password;
 		private String loginType;
+		private Integer sex;
+		
 		
 		public String getUsername() {
 			return username;
@@ -106,6 +108,12 @@ public class BaseActionDataDto {
 		public void setLoginType(String loginType) {
 			this.loginType = loginType;
 		}
+        public Integer getSex() {
+            return sex;
+        }
+        public void setSex(Integer sex) {
+            this.sex = sex;
+        }
 		
 		
 	}

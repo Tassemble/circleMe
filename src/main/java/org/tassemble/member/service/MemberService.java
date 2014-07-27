@@ -7,5 +7,7 @@ import com.game.core.bomb.dto.BaseActionDataDto.GameSignUpData;
 
 public interface MemberService extends BaseService<Member> {
 
+    void addNewUser(GameSignUpData data);
+
 
 }

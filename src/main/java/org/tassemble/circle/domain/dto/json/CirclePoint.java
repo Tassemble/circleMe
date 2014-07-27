@@ -1,11 +1,20 @@
 package org.tassemble.circle.domain.dto.json;
 
+import com.google.gson.annotations.SerializedName;
+
 
 public class CirclePoint {
     
+    
+    
     double dis;
     
+    
+    @SerializedName("coordinate")
     Coordinate coordinate;
+    
+    
+    @SerializedName("memberInfo")
     MemberInfo memberInfo;
     String color;
     
