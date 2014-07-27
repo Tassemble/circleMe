@@ -31,6 +31,17 @@
 	</appender>
 	
 	
+	<appender name="tassemble_appender" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="threshold" value="debug" />
+		<param name="file" value="logs/game/all.log" />
+		<param name="append" value="true" />
+		<param name="datePattern" value="'.'yyyy-MM-dd" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%p [%t] %c{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>
+	
+	
 	
 	<appender name="transaction_appender" class="org.apache.log4j.DailyRollingFileAppender">
 		<param name="threshold" value="debug" />
@@ -55,11 +66,18 @@
 		<appender-ref ref="CONSOLE" />
 		<appender-ref ref="game_appender" />
 	</logger>
+	
+	<logger name="org.tassemble" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="tassemble_appender" />
+	</logger>
+	
+	
 
 
 	<root>
 		<level value="info" />
-		<appender-ref ref="game_appender" />
 		<appender-ref ref="CONSOLE" />
 	</root>
 

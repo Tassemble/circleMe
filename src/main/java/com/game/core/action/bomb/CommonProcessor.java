@@ -657,20 +657,40 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	    HashMap<Object, Object> parameters = mapper.readValue(String.valueOf(message), HashMap.class);
 	    
 	    
-	    
-	    Double longitude = (Double)parameters.get("longitude");
-	    Double latitude = (Double)parameters.get("latitude");
-	    Double meter= (Double)parameters.get("meter");
-	    Boolean onlyfFriend = (Boolean)parameters.get("onlyfFriend");
+	    Object meterObj = parameters.get("meter");
 	    
 	    
-	    if (longitude == null || latitude == null || meter == null) {
-	        throw new BombException(-1, "one of them[longitude, latitude, meter] is null, please check");
+	    if (meterObj == null) {
+            throw new BombException(-1, "one of them[longitude, latitude, meter] is null, please check");
+        }
+	    
+	    
+	    
+	    Double meter= Double.valueOf(String.valueOf(meterObj));
+	    
+	    
+	   
+	    
+	    DBObject iLocationQuery = new BasicDBObject();
+	    iLocationQuery.put("member_id", GameMemory.getUser().getId());
+	    DBObject dbResult = getDefaultCollection().findOne(iLocationQuery);
+	    CirclePoint point = null;
+	    if (dbResult != null) {
+	        point = GsonUtils.getFromJson(dbResult.toString(), CirclePoint.class);
 	    }
+	    
+	    if (point == null || point.getCoordinate() == null 
+	            || point.getCoordinate().getLatitude() == null 
+	            || point.getCoordinate().getLongitude() == null )
+	    {
+	        throw new BombException(-2001, "please upload your location");
+	    }
+	    
+	    
 	    
 	    DBObject dbObject = new BasicDBObject();
         dbObject.put("geoNear", "location");
-        dbObject.put("near", Arrays.asList(longitude, latitude));
+        dbObject.put("near", Arrays.asList(point.getCoordinate().getLongitude(), point.getCoordinate().getLatitude()));
         dbObject.put("spherical", "true");
         dbObject.put("maxDistance", meter / 1000);
         dbObject.put("distanceMultiplier", 6371000);
@@ -699,13 +719,16 @@ public class CommonProcessor implements ActionAnotationProcessor {
         
         
         
-        Double longitude = (Double)parameters.get("longitude");
-        Double latitude = (Double)parameters.get("latitude");
+        Object longitudeObj = parameters.get("longitude");
+        Object latitudeObj = parameters.get("latitude");
         
-        if (longitude == null || latitude == null) {
+        if (longitudeObj == null || latitudeObj == null) {
             throw new BombException(-1, "one of them[longitude, latitude] is null, please check");
         }
         
+        
+        double longitude = Double.valueOf(String.valueOf(longitudeObj));
+        double latitude = Double.valueOf(String.valueOf(latitudeObj));
         DBObject query = new BasicDBObject();
         query.put("member_id", GameMemory.getUser().getId());
         

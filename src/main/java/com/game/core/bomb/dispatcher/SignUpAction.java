@@ -44,6 +44,7 @@ public class SignUpAction implements BaseAction{
 			return;
 		}
 		data.setLoginType(LoginConstant.LOGIN_TYPE_DEFAULT);
+		
 		memberService.addNewUser(data);
 		
 		
