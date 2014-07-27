@@ -88,4 +88,12 @@
 
 
 
+
+	 <bean id="mongoClient" class="com.mongodb.MongoClient">
+                <constructor-arg name="host" type="java.lang.String" value="${mongo_host}" />
+                <constructor-arg name="port" type="int" value="${mongo_port}" />
+     </bean>
+     
+     
+
 </beans>

@@ -135,7 +135,7 @@ public class AuthIoFilter extends IoFilterAdapter {
 						OnlineUserDto oldUser = GameMemory.ONLINE_USERS.get(dto.getId());
 						GameMemory.ONLINE_USERS.remove(dto);
 						oldUser.getSession().write("remote client logon");
-						oldUser.getSession().close()
+						oldUser.getSession().close();
 					//	if (session.getId() != oldUser.getSession().getId()) {
 					//		session.write(WordPressUtils.toJson(new ReturnDto(
 					//				ReturnDto.ALREADY_LOGON_CODE_WITH_OTHER_REMOTE_CLIENT, action,

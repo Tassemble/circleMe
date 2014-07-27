@@ -31,7 +31,6 @@ import com.game.bomb.Dao.UserMetaDao;
 import com.game.bomb.config.BombConfig;
 import com.game.bomb.constant.BombConstant;
 import com.game.bomb.domain.User;
-import com.game.bomb.mobile.dto.DayAward;
 import com.game.bomb.mobile.dto.MobileUserDto;
 import com.game.bomb.service.FriendRelationService;
 import com.game.bomb.service.TransactionService;
@@ -42,7 +41,6 @@ import com.game.core.action.processor.PlayerInfoProcessorHelper;
 import com.game.core.annotation.ActionAnnotation;
 import com.game.core.bomb.dto.OnlineUserDto;
 import com.game.core.bomb.dto.ReturnConstant;
-import com.game.core.bomb.dto.ReturnDto;
 import com.game.core.bomb.logic.RoomLogic;
 import com.game.core.bomb.play.dto.PlayRoomDto;
 import com.game.core.exception.ActionFailedException;
@@ -52,6 +50,7 @@ import com.game.core.exception.NoAuthenticationException;
 import com.game.utils.GsonUtils;
 import com.game.utils.HttpClientUtils;
 import com.google.common.collect.Lists;
+import com.mongodb.MongoClient;
 
 @Component
 public class CommonProcessor implements ActionAnotationProcessor {
@@ -88,6 +87,11 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	
 	@Autowired
 	UserDao userDao;
+	
+	
+	@Autowired
+    MongoClient mongoClient;
+	
 	
 	
 	//{"action":"AIStart"} 
