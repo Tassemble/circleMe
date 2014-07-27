@@ -1,7 +1,7 @@
 package com.game.bomb.thirdaccount.service;
 
-import com.game.bomb.domain.User;
+import org.tassemble.member.domain.Member;
 
 public interface SinaWeiboService {
-	public User validateAndGetWeiboUser(String token, String username);
+	public Member validateAndGetWeiboUser(String token, String username);
 }

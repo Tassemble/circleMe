@@ -2,8 +2,9 @@ package ${package}.domain;
 
 import com.netease.framework.dao.sql.annotation.DataProperty;
 import java.math.BigDecimal;
+import com.game.base.commons.domain.BaseDomain;
 
-public class ${domainClass} {
+public class ${domainClass} extends BaseDomain{
 
 private static final long serialVersionUID = 1L;
 

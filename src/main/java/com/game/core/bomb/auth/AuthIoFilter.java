@@ -17,11 +17,12 @@ import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tassemble.member.domain.Member;
+import org.tassemble.member.service.MemberService;
 
 import com.game.bomb.constant.LoginConstant;
 import com.game.bomb.domain.User;
 import com.game.bomb.mobile.dto.GameVersionDto;
-import com.game.bomb.service.UserService;
 import com.game.bomb.thirdaccount.service.SinaWeiboService;
 import com.game.core.GameMemory;
 import com.game.core.JsonSessionWrapper;
@@ -55,7 +56,7 @@ public class AuthIoFilter extends IoFilterAdapter {
 	private static final Logger	LOG		= LoggerFactory.getLogger(AuthIoFilter.class);
 
 	@Autowired
-	UserService					userService;
+	MemberService					memberService;
 	
 	@Autowired
 	SinaWeiboService sinaWeiboService;
@@ -200,28 +201,36 @@ public class AuthIoFilter extends IoFilterAdapter {
 		} else if (LoginConstant.LOGIN_TYPE_SINA.equals(loginType)) {
 			String username = json.getJSONObject("data").getString("userid");
 			String token = json.getJSONObject("data").getString("token");
-			User userFromWeibo = validateAndGetWeiboUser(token, username);
+			Member userFromWeibo = validateAndGetWeiboUser(token, username);
 			
-			User query = new User();
-			query.setUsername(username); //是否有注入的可能性
+			Member query = new Member();
+			query.setUsername(username); 
 			query.setLoginType(loginType);
-			List<User> users = userService.getByDomainObjectSelective(query);
+			List<Member> users = memberService.getByDomainObjectSelective(query);
 			if (CollectionUtils.isEmpty(users)) { //no users register
 				GameSignUpData signUpData = new GameSignUpData();
 				signUpData.setUsername(username);
 				signUpData.setAction(action);
-				if (StringUtils.isNotBlank(userFromWeibo.getNickName())) {
+				if (StringUtils.isNotBlank(userFromWeibo.getNickname())) {
 					try {
-						signUpData.setNickname(Base64.encodeBase64String(userFromWeibo.getNickName().getBytes("UTF-8")));
+						signUpData.setNickname(Base64.encodeBase64String(userFromWeibo.getNickname().getBytes("UTF-8")));
 					} catch (UnsupportedEncodingException e) {
 						LOG.warn("exception of base64 encode for nickname");
 					}
 				}
 				
 				signUpData.setLoginType(loginType);
-				userService.addNewUser(signUpData); // add new one
 				
-				users = userService.getByDomainObjectSelective(query); //query again
+				
+				Member member = new Member();
+				member.setGmtCreate(System.currentTimeMillis());
+				member.setGmtModified(System.currentTimeMillis());
+				member.setLoginType(signUpData.getLoginType());
+				member.setNickname(signUpData.getNickname());
+				member.setPassword(DigestUtils.md5Hex(signUpData.getPassword()));
+				member.setUsername(signUpData.getUsername());
+				memberService.add(member);
+				users = memberService.getByDomainObjectSelective(query); //query again
 				OnlineUserDto dto = new OnlineUserDto(users.get(0));
 				dto.setStatus(OnlineUserDto.STATUS_ONLINE);
 				return dto;
@@ -251,7 +260,7 @@ public class AuthIoFilter extends IoFilterAdapter {
 	}
 
 	
-	public User validateAndGetWeiboUser(String accessToken, String uid) {
+	public Member validateAndGetWeiboUser(String accessToken, String uid) {
 		  return sinaWeiboService.validateAndGetWeiboUser(accessToken, uid);
 	}
 	private OnlineUserDto validateLogin(LoginData loginData) {
@@ -268,11 +277,11 @@ public class AuthIoFilter extends IoFilterAdapter {
 		if (isMock) {
 			return dto;
 		} else {
-			User query = new User();
-			query.setMd5Password(DigestUtils.md5Hex(loginData.getPassword()));
+		    Member query = new Member();
+			query.setPassword(DigestUtils.md5Hex(loginData.getPassword()));
 			query.setUsername(loginData.getUsername()); //是否有注入的可能性
 			query.setLoginType(loginData.getLoginType());
-			List<User> users = userService.getByDomainObjectSelective(query);
+			List<Member> users = memberService.getByDomainObjectSelective(query);
 			if (!CollectionUtils.isEmpty(users)) {
 				dto = new OnlineUserDto(users.get(0));
 				dto.setStatus(OnlineUserDto.STATUS_ONLINE);

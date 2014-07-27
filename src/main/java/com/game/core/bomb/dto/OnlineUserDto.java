@@ -1,6 +1,7 @@
 package com.game.core.bomb.dto;
 
 import org.apache.mina.core.session.IoSession;
+import org.tassemble.member.domain.Member;
 
 import com.game.bomb.domain.User;
 
@@ -38,6 +39,15 @@ public class OnlineUserDto {
 	private transient TimeoutTaskWrapper timeoutTask;
 	
 	public OnlineUserDto() {}
+	
+	public OnlineUserDto(Member user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.nickname = user.getNickname();
+    }
+	
+	
+	
 	public OnlineUserDto(User user) {
 		this.id = user.getId();
 		this.username = user.getUsername();

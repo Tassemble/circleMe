@@ -40,6 +40,16 @@ public class ReverseGenerator extends BaseTestCase {
 	
 	private Logger LOG = LoggerFactory.getLogger(ReverseGenerator.class);
 	
+	
+	public boolean needFilter(String fieldName) {
+        List<String> existedFileds = Arrays.asList("gmt_create", "gmt_modified", "id");
+        if (existedFileds.contains(fieldName)) {
+            return true;
+        }
+        return false;
+    }
+	
+	
 	@Test
 	public void generate() throws IOException {
 
@@ -99,14 +109,7 @@ public class ReverseGenerator extends BaseTestCase {
 				}
 		}
 	}
-	//using abstract;
-	public boolean needFilter(String fieldName) {
-//		List<String> existedFileds = Arrays.asList("gmt_create", "gmt_modified", "id");
-//		if (existedFileds.contains(fieldName)) {
-//			return true;
-//		}
-		return false;
-	}
+
 	
 	
 	public void innerGenerate(String table, String packageValue, boolean replaceDomainIfExist, boolean replaceDaoIfExist, boolean replaceServiceIfExist) throws IOException {
@@ -270,7 +273,7 @@ public class ReverseGenerator extends BaseTestCase {
 		if ("VARCHAR".equalsIgnoreCase(typeName)) {
 			return "String";
 		}
-		if ("BIGINT".equalsIgnoreCase(typeName)) {
+		if (StringUtils.startsWithIgnoreCase(typeName, "BIGINT")) {
 			return "Long";
 		}
 		

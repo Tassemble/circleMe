@@ -2,44 +2,32 @@ package org.tassemble.member.domain;
 
 import com.netease.framework.dao.sql.annotation.DataProperty;
 import java.math.BigDecimal;
+import com.game.base.commons.domain.BaseDomain;
 
-public class CircleMemberRelation {
+public class CircleMemberRelation extends BaseDomain{
 
 private static final long serialVersionUID = 1L;
 
-	private String id;
-	private String selfId;
-	private String partnerId;
+	private Long selfId;
+	private Long partnerId;
 	private Integer relativeColor;
-	private Long gmtCreate;
-	private Long gmtModified;
 	
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	@DataProperty(column = "id")	
-	public String getId() {
-		return id;
-	}	
-
-	
-	public void setSelfId(String selfId) {
+	public void setSelfId(Long selfId) {
 		this.selfId = selfId;
 	}
 	
 	@DataProperty(column = "self_id")	
-	public String getSelfId() {
+	public Long getSelfId() {
 		return selfId;
 	}	
 
 	
-	public void setPartnerId(String partnerId) {
+	public void setPartnerId(Long partnerId) {
 		this.partnerId = partnerId;
 	}
 	
 	@DataProperty(column = "partner_id")	
-	public String getPartnerId() {
+	public Long getPartnerId() {
 		return partnerId;
 	}	
 
@@ -51,26 +39,6 @@ private static final long serialVersionUID = 1L;
 	@DataProperty(column = "relative_color")	
 	public Integer getRelativeColor() {
 		return relativeColor;
-	}	
-
-	
-	public void setGmtCreate(Long gmtCreate) {
-		this.gmtCreate = gmtCreate;
-	}
-	
-	@DataProperty(column = "gmt_create")	
-	public Long getGmtCreate() {
-		return gmtCreate;
-	}	
-
-	
-	public void setGmtModified(Long gmtModified) {
-		this.gmtModified = gmtModified;
-	}
-	
-	@DataProperty(column = "gmt_modified")	
-	public Long getGmtModified() {
-		return gmtModified;
 	}	
 
 

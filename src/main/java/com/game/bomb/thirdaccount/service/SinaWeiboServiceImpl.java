@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.tassemble.member.domain.Member;
 
 import com.game.bomb.domain.User;
 import com.game.core.exception.BombException;
@@ -19,7 +20,7 @@ public class SinaWeiboServiceImpl implements SinaWeiboService {
 	private static final Logger LOG = LoggerFactory.getLogger(SinaWeiboServiceImpl.class);
 
 	@Override
-	public User validateAndGetWeiboUser(String accessToken, String uid) {
+	public Member validateAndGetWeiboUser(String accessToken, String uid) {
 		try {
 			StringBuilder sb = new StringBuilder("https://api.weibo.com/2/users/show.json?").append("uid=").append(uid)
 					.append("&access_token=").append(accessToken);
@@ -33,9 +34,9 @@ public class SinaWeiboServiceImpl implements SinaWeiboService {
 				LOG.info("request url:" + sb.toString() + ",get from weibo:" + result);
 			}
 			
-			User user = new User();
+			Member user = new Member();
 
-			user.setNickName(net.sf.json.JSONObject.fromObject(result).getString("screen_name"));
+			user.setNickname(net.sf.json.JSONObject.fromObject(result).getString("screen_name"));
 			return user;
 		} catch (Exception e) {
 			throw new BombException(-202, "token:" + accessToken + ", uid:" + uid + ",error:" + e.getMessage());
