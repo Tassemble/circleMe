@@ -75,7 +75,7 @@
 		init-method="bind" destroy-method="unbind">
 		 <constructor-arg type="int" value="1000"/>
 		<property name="handler" ref="gameProtocolHandler" />
-		<property name="defaultLocalAddress" value=":8888" />
+		<property name="defaultLocalAddress" value=":8889" />
 		<property name="filterChainBuilder" ref="filterChainBuilder" />
 	</bean>
 
