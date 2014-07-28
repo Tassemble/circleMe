@@ -50,7 +50,7 @@ public class SqlManagerImpl extends SqlManagerBase implements SqlManager {
     			        return idGenerator.get(tableName).getAndIncrement();
     			    }
     				Statement stmt =con.createStatement();
-    				ResultSet rs = stmt.executeQuery("SELECT Auto_increment FROM information_schema.tables WHERE table_name = '" + tableName + "'");
+    				ResultSet rs = stmt.executeQuery("SELECT max(Auto_increment) FROM information_schema.tables WHERE table_name = '" + tableName + "'");
     				rs.next();
     				long id = rs.getLong(1);
     				AtomicLong atomicLong = new AtomicLong(id);
