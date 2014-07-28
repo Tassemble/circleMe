@@ -17,7 +17,7 @@ import org.apache.mina.core.session.IoSessionConfig;
 import org.apache.mina.core.write.WriteRequest;
 import org.apache.mina.core.write.WriteRequestQueue;
 
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 
 
 /**
@@ -90,12 +90,12 @@ public class JsonSessionWrapper implements IoSession{
 
 	@Override
 	public WriteFuture write(Object message) {
-		return session.write(GsonUtils.toJson(message));
+		return session.write(CommonUtils.toJson(message));
 	}
 
 	@Override
 	public WriteFuture write(Object message, SocketAddress destination) {
-		return session.write(GsonUtils.toJson(message), destination);
+		return session.write(CommonUtils.toJson(message), destination);
 	}
 
 	@Override

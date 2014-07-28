@@ -45,7 +45,7 @@ import com.game.base.dto.ProductEvaluationDto;
 import com.game.base.dto.TmallCommentURLDto;
 import com.game.base.dto.TmallCommentsDto;
 import com.game.base.dto.TmallProductDto;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 import com.game.utils.HttpClientUtils;
 import com.game.utils.HttpDataProviderCandidate;
 import com.game.utils.ProductScoreUtils;
@@ -196,8 +196,8 @@ public class TmallCrawlerImpl implements TmallCrawler {
 			}
 			comment.setCommentContent(tcomment.getString("rateContent"));
 			comment.setCommentAuthor(tcomment.getString("displayUserNick"));
-			comment.setCommentDate(new Timestamp(GsonUtils.parseTime(tcomment.getString("rateDate"))));
-			comment.setCommentDateGmt(new Timestamp(GsonUtils.parseTime(tcomment.getString("rateDate"))));
+			comment.setCommentDate(new Timestamp(CommonUtils.parseTime(tcomment.getString("rateDate"))));
+			comment.setCommentDateGmt(new Timestamp(CommonUtils.parseTime(tcomment.getString("rateDate"))));
 			comment.setCommentType(Comment.TYPE_TMALL);
 			comments.add(comment);
 		}
@@ -317,7 +317,7 @@ public class TmallCrawlerImpl implements TmallCrawler {
 			JSONObject jsonObject = JSONObject.fromObject(json);
 			String tagClouds = jsonObject.getJSONObject("tags").getString("tagClouds");
 
-			List<ProductEvaluationDto> dtos = GsonUtils.fromJson(tagClouds,
+			List<ProductEvaluationDto> dtos = CommonUtils.fromJson(tagClouds,
 					new TypeToken<List<ProductEvaluationDto>>() {
 					}.getType());
 			map.put(ProductEvaluationDto.TAG_ALL_PRODUCT_EVALUATION, dtos);
@@ -329,7 +329,7 @@ public class TmallCrawlerImpl implements TmallCrawler {
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JSONObject object = jsonArray.getJSONObject(i);
 				if ("聚拢效果".equals(object.getString("dimenName"))) {
-					List<GatherEffect> effects = GsonUtils.fromJson(object.getString("tagScaleList"),
+					List<GatherEffect> effects = CommonUtils.fromJson(object.getString("tagScaleList"),
 							new TypeToken<List<GatherEffect>>() {
 							}.getType());
 					map.put(GatherEffect.TAG_GATHER, effects);
@@ -444,6 +444,6 @@ public class TmallCrawlerImpl implements TmallCrawler {
 		isMock = true;
 		TmallCrawlerImpl crawlerImpl = new TmallCrawlerImpl();
 		List<String> ids = crawlerImpl.searchWithPhases("文胸 薄款", 1);
-		GsonUtils.printJson(ids);
+		CommonUtils.printJson(ids);
 	}
 }

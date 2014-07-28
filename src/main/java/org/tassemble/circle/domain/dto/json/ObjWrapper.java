@@ -12,7 +12,7 @@ public class ObjWrapper {
     Coordinate coordinate;
 
     @SerializedName("memberInfo")
-    MemberInfo memberInfo;
+    MemberInfoDto memberInfo;
 
     
     public Coordinate getCoordinate() {
@@ -25,12 +25,12 @@ public class ObjWrapper {
     }
 
     
-    public MemberInfo getMemberInfo() {
+    public MemberInfoDto getMemberInfo() {
         return memberInfo;
     }
 
     
-    public void setMemberInfo(MemberInfo memberInfo) {
+    public void setMemberInfo(MemberInfoDto memberInfo) {
         this.memberInfo = memberInfo;
     }
     

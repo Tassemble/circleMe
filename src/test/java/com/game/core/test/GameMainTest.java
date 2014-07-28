@@ -22,7 +22,7 @@ import com.game.bomb.thirdaccount.service.SinaWeiboService;
 import com.game.core.GameMemory;
 import com.game.core.exception.ActionFailedException;
 import com.game.core.exception.BombException;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 
 public class GameMainTest extends BaseTestCase {
 
@@ -86,7 +86,7 @@ public class GameMainTest extends BaseTestCase {
 	@Test
 	public void testDecodeMsg() {
 		System.out
-				.println(GsonUtils
+				.println(CommonUtils
 						.toJson("{\"action\":\"forward\",\"code\":200,\"message\":\"AQAAAGxqZW1oamVsZmZmZWxkZGZmZWVobW1nbWVtZGZobWxpbGRmZGtkZWVnaGZoZGtsZWxsZWVnamVtZmpkZG1sZW1qbW1pZm1nZmVtZmlkZWVlbGdqZWhmbWZlbGhmZm1qZm1laGZsZ2loaGtnZ2lsZGRkZmxtZWdkaGhmZW1kaGZnZW1oZmRrZWRqZGZtbG1tZ2xsZW1nZWZpbGVlZGxoZWhnbGxlaWhkZWs=\"}"));
 	}
 

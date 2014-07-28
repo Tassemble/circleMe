@@ -115,7 +115,7 @@ public class ProductScoreUtils {
 		JSONObject jsonObject = JSONObject.fromObject(json);
 		String tagClouds = jsonObject.getJSONObject("tags").getString("tagClouds");
 
-		List<ProductEvaluationDto> dtos = GsonUtils.fromJson(tagClouds,
+		List<ProductEvaluationDto> dtos = CommonUtils.fromJson(tagClouds,
 				new TypeToken<List<ProductEvaluationDto>>() {
 				}.getType());
 		

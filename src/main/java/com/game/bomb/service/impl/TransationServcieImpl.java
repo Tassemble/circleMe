@@ -35,7 +35,7 @@ import com.game.core.bomb.dto.OnlineUserDto;
 import com.game.core.exception.ActionFailedException;
 import com.game.core.exception.BombException;
 import com.game.core.exception.ExceptionConstant;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 import com.game.utils.HttpClientUtils;
 import com.game.utils.HttpDataProvider;
 
@@ -104,8 +104,8 @@ public class TransationServcieImpl extends BaseServiceImpl<BaseDao<Transaction>,
 					try {
 						Map<String, String> map = new HashMap<String, String>();
 						map.put("receipt-data", data);
-						LOG.info("send:" + GsonUtils.toJson(map));
-						return new StringEntity(GsonUtils.toJson(map), ContentType.APPLICATION_JSON);
+						LOG.info("send:" + CommonUtils.toJson(map));
+						return new StringEntity(CommonUtils.toJson(map), ContentType.APPLICATION_JSON);
 					} catch (Exception e) {
 						return null;
 					}
@@ -189,7 +189,7 @@ public class TransationServcieImpl extends BaseServiceImpl<BaseDao<Transaction>,
 			}
 			return map;
 		} catch (Exception e) {
-			LOG.error(e.getMessage() + " buyer " + GsonUtils.toJson(user), e);
+			LOG.error(e.getMessage() + " buyer " + CommonUtils.toJson(user), e);
 			throw new ActionFailedException(e.getMessage(), GameMemory.LOCAL_SESSION_CONTEXT.get().getAction());
 		}
 	}

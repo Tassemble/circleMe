@@ -52,8 +52,8 @@ public class HttpDataProviderCandidate {
 						cookie);
 				List<Header> headers = new ArrayList<Header>();
 				headers.add(header);
-				headers.add(new BasicHeader("Host", GsonUtils.host));
-				headers.add(new BasicHeader("Origin", GsonUtils.origin));
+				headers.add(new BasicHeader("Host", CommonUtils.host));
+				headers.add(new BasicHeader("Origin", CommonUtils.origin));
 
 				return headers;
 			}
@@ -65,7 +65,7 @@ public class HttpDataProviderCandidate {
 		return new HttpDataProvider() {
 			@Override
 			public String getUrl() {
-				return GsonUtils.origin + "/wp-login.php";
+				return CommonUtils.origin + "/wp-login.php";
 			}
 
 			@Override
@@ -75,7 +75,7 @@ public class HttpDataProviderCandidate {
 					list.add(new BasicNameValuePair("log", username));
 					list.add(new BasicNameValuePair("pwd", password));
 					list.add(new BasicNameValuePair("wp-submit", "登录"));
-					list.add(new BasicNameValuePair("redirect_to", GsonUtils.origin + "/wp-admin/"));
+					list.add(new BasicNameValuePair("redirect_to", CommonUtils.origin + "/wp-admin/"));
 					list.add(new BasicNameValuePair("testcookie", "1"));
 					return new UrlEncodedFormEntity(list, "UTF-8");
 				} catch (UnsupportedEncodingException e) {
@@ -94,8 +94,8 @@ public class HttpDataProviderCandidate {
 				headers.add(new BasicHeader("Cache-Control", "no-cache"));
 				headers.add(new BasicHeader("Connection", "keep-alive"));
 				headers.add(new BasicHeader("Content-Type", "application/x-www-form-urlencoded"));
-				headers.add(new BasicHeader("Host", GsonUtils.host));
-				headers.add(new BasicHeader("Origin", GsonUtils.origin));
+				headers.add(new BasicHeader("Host", CommonUtils.host));
+				headers.add(new BasicHeader("Origin", CommonUtils.origin));
 				headers.add(new BasicHeader("Pragma", "no-cache"));
 				headers.add(new BasicHeader("Referer", "http://520wenxiong.com/wp-login.php"));
 				headers.add(new BasicHeader("User-Agent",
@@ -110,7 +110,7 @@ public class HttpDataProviderCandidate {
 
 			@Override
 			public String getUrl() {
-				return GsonUtils.origin + "/wp-admin/async-upload.php";
+				return CommonUtils.origin + "/wp-admin/async-upload.php";
 			}
 
 			// 1000005
@@ -165,11 +165,11 @@ public class HttpDataProviderCandidate {
 				headers.add(header);
 				headers.add(new BasicHeader("User-Agent",
 						"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22"));
-				headers.add(new BasicHeader("Referer", GsonUtils.origin
+				headers.add(new BasicHeader("Referer", CommonUtils.origin
 						+ "/wp-admin/post.php?post=1000005&action=edit"));
 
-				headers.add(new BasicHeader("Host", GsonUtils.host));
-				headers.add(new BasicHeader("Origin", GsonUtils.origin));
+				headers.add(new BasicHeader("Host", CommonUtils.host));
+				headers.add(new BasicHeader("Origin", CommonUtils.origin));
 				
 				return headers;
 			}

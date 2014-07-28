@@ -1,19 +1,23 @@
 package com.game.utils;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.game.base.commons.utils.text.JsonUtils;
+import com.game.base.commons.utils.reflection.ReflectionUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 
 
-public class GsonUtils {
+public class CommonUtils {
 	
 	
 	private static Gson						g	= new GsonBuilder().serializeNulls().create();
@@ -112,6 +116,36 @@ public class GsonUtils {
         }
         return a >= b;
     }
+    
+    
+    public static <PROP, OBJ> Map<PROP, OBJ> makeMapByProperty(List<? extends OBJ> list, String propertyName) {
+        Map<PROP, OBJ> map = new HashMap<PROP, OBJ>();
+        if (CollectionUtils.isEmpty(list)) {
+            return map;
+        }
+        
+        Class<? extends Object> clz = list.get(0).getClass();
+        Method mth = ReflectionUtils.getPropertyMethod(clz, propertyName);
+
+        for (OBJ item : list) {
+
+            PROP value = null;
+            try {
+                value = (PROP) mth.invoke(item);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            if (value == null) {
+                continue;
+            }
+            if (map.containsKey(value)) {
+//                LOG.warn("list property is not unique");
+//                throw new IllegalArgumentException("list property is not unique");
+            }
+            map.put(value, item);
+        }
+        return map;
+    }   
     
     
 }

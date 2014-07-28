@@ -13,7 +13,7 @@ import com.game.base.dao.BaseTestCase;
 import com.game.core.GameMemory;
 import com.game.core.action.bomb.CommonProcessor;
 import com.game.core.action.processor.PlayerInfoProcessorHelper;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 
 public class CommonProcessorTest extends BaseTestCase {
 
@@ -46,7 +46,7 @@ public class CommonProcessorTest extends BaseTestCase {
 		Map map = new HashMap<String, Object>();
 		playerInfoProcessorHelper.innerDownloadPlayerInfo(map);
 
-		System.out.println(GsonUtils.toJson(map));
+		System.out.println(CommonUtils.toJson(map));
 	}
 
 	@Test
@@ -57,6 +57,6 @@ public class CommonProcessorTest extends BaseTestCase {
 		Map map = new HashMap<String, Object>();
 		commonProcessor.verifyReceiptData(data, map);
 		
-		System.out.println(GsonUtils.toJson(map));
+		System.out.println(CommonUtils.toJson(map));
 	}
 }

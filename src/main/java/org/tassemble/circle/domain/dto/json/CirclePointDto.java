@@ -1,28 +1,33 @@
 package org.tassemble.circle.domain.dto.json;
 
+import org.tassemble.member.domain.CircleMember;
+
 import com.google.gson.annotations.SerializedName;
 
-public class CirclePointWriteMode {
+
+public class CirclePointDto {
 
     Double     dis;
     private Double     degree;
     
    
-    String     color;
+    Integer     color;
     
-    
-    @SerializedName("coordinate")
     Coordinate coordinate;
 
-    @SerializedName("memberInfo")
-    MemberInfo memberInfo;
+    
+    MemberInfoDto memberInfo;
+    
+    
+    
 
     
-    public CirclePointWriteMode() {}
+    public CirclePointDto() {}
     
     
-    public CirclePointWriteMode(CirclePointReadMode readMode) {
-        this.color = readMode.getColor();
+    public CirclePointDto(CirclePointReadMode readMode) {
+        this.color = CircleMember.CIRCLE_COLOR_GREY;
+        this.dis = readMode.getDis();
         this.setCoordinate(readMode.getObj().getCoordinate());
         this.setMemberInfo(readMode.getObj().getMemberInfo());
         
@@ -38,12 +43,12 @@ public class CirclePointWriteMode {
     }
 
     
-    public MemberInfo getMemberInfo() {
+    public MemberInfoDto getMemberInfo() {
         return memberInfo;
     }
 
     
-    public void setMemberInfo(MemberInfo memberInfo) {
+    public void setMemberInfo(MemberInfoDto memberInfo) {
         this.memberInfo = memberInfo;
     }
     
@@ -58,13 +63,18 @@ public class CirclePointWriteMode {
         this.dis = dis;
     }
 
-    public String getColor() {
+    
+    
+    public Integer getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+
+    
+    public void setColor(Integer color) {
         this.color = color;
     }
+
 
     public Double getDegree() {
         return degree;

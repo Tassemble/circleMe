@@ -34,7 +34,7 @@ import com.game.core.bomb.logic.RoomLogic;
 import com.game.core.bomb.play.dto.PlayRoomDto;
 import com.game.core.exception.BombException;
 import com.game.core.utils.CellLocker;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 import com.google.common.collect.Maps;
 
 /**
@@ -163,7 +163,7 @@ public class BombMessageBizHandler implements BombMessageHandler{
 		
 		// ~ 提供了两种灵活的处理方式：1. 既能处理长连接的方式，2. 也能处理Request-Response的方式(类似http请求)
 		if (BaseActionDataDto.getClassByAction(action) != null) {
-			data = (BaseActionDataDto) GsonUtils.getFromJson(message.toString(),
+			data = (BaseActionDataDto) CommonUtils.getFromJson(message.toString(),
 					BaseActionDataDto.getClassByAction(action));
 
 			// 特殊输出，如果是单纯字节的话========================end

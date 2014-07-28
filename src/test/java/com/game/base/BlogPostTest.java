@@ -24,7 +24,7 @@ import com.game.base.dao.WPPostDao;
 import com.game.base.dto.TmallCommentsDto;
 import com.game.base.service.WPPostService;
 import com.game.crawl.taobao.TmallCrawler;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 import com.game.utils.TmallCrawlerUtils;
 import com.google.common.collect.ImmutableMap;
 
@@ -209,7 +209,7 @@ public class BlogPostTest extends BaseTestCase {
 
 	@Test
 	public void getPrice() {
-		GsonUtils.printJson(tmallCrawler.getTmallProductDto("http://detail.tmall.com/item.htm?id=12738735995"));
+		CommonUtils.printJson(tmallCrawler.getTmallProductDto("http://detail.tmall.com/item.htm?id=12738735995"));
 	}
 
 }

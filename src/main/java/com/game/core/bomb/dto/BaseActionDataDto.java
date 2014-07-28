@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.game.bomb.domain.User;
 import com.game.core.exception.NoSuchActionException;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 import com.google.gson.Gson;
 
 public class BaseActionDataDto {
@@ -226,7 +226,7 @@ public class BaseActionDataDto {
 		// ForwardData data =
 		// g.fromJson("{\"action\":\"forward\", \"friendList\":[\"a\", \"b\", \"c\"], \"data\":\"hello i am here\"}",
 		// JsonDto.ForwardData.class);
-		BaseActionDataDto json = (BaseActionDataDto) GsonUtils.getFromJson(
+		BaseActionDataDto json = (BaseActionDataDto) CommonUtils.getFromJson(
 				"{\"action\":\"getFriendList\"}",
 				getClassByAction("getFriendList"));
 		System.out.println("action:" + json.getAction());

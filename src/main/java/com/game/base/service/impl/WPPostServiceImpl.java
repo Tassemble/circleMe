@@ -31,7 +31,7 @@ import com.game.base.dto.TmallProductDto;
 import com.game.base.service.WPPostService;
 import com.game.crawl.taobao.TmallCrawler;
 import com.game.crawl.taobao.TmallCrawlerImpl;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 import com.game.utils.HtmlTagsUtils;
 import com.game.utils.HttpClientUtils;
 import com.game.utils.HttpDataProviderCandidate;
@@ -285,9 +285,9 @@ public class WPPostServiceImpl extends BaseServiceImpl<WPPostDao, WPPost> implem
 					
 					String html = HttpClientUtils.getHtmlByGetMethod(
 							getWPPage,
-							HttpDataProviderCandidate.getHomePage(GsonUtils.origin
+							HttpDataProviderCandidate.getHomePage(CommonUtils.origin
 									+ "/wp-admin/post.php?post=" + postId + "&action=edit", HttpDataProviderCandidate.cookie));
-					String nonce = GsonUtils.getUploadFileNonce(html);
+					String nonce = CommonUtils.getUploadFileNonce(html);
 					String result = HttpClientUtils.getHtmlByPostMethod(
 							postClient,
 							HttpDataProviderCandidate.getPostPictureData(firstPicture,
@@ -342,9 +342,9 @@ public class WPPostServiceImpl extends BaseServiceImpl<WPPostDao, WPPost> implem
 		resetCookie(httpClient);
 		String html = HttpClientUtils.getHtmlByGetMethod(
 				new DefaultHttpClient(),
-				HttpDataProviderCandidate.getHomePage(GsonUtils.origin
+				HttpDataProviderCandidate.getHomePage(CommonUtils.origin
 						+ "/wp-admin/post.php?post=1000005&action=edit", HttpDataProviderCandidate.cookie));
-		String nonce = GsonUtils.getUploadFileNonce(html);
+		String nonce = CommonUtils.getUploadFileNonce(html);
 		System.out.println(nonce);
 //		String result = HttpClientUtils
 //				.getHtmlByPostMethod(

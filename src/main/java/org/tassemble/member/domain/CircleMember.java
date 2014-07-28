@@ -13,6 +13,8 @@ private static final long serialVersionUID = 1L;
 	private Integer playerRole;
 	private Long playerRoleExpired;
 	
+	public static final  Integer CIRCLE_COLOR_GREY = 1;
+	
 	public void setCircleColor(Integer circleColor) {
 		this.circleColor = circleColor;
 	}

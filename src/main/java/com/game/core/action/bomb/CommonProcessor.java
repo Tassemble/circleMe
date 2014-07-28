@@ -27,13 +27,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.tassemble.circle.domain.dto.json.MemberInfoDto;
 import org.tassemble.circle.domain.dto.json.CirclePointReadMode;
-import org.tassemble.circle.domain.dto.json.CirclePointWriteMode;
+import org.tassemble.circle.domain.dto.json.CirclePointDto;
 import org.tassemble.circle.domain.dto.json.Coordinate;
-import org.tassemble.circle.domain.dto.json.MemberInfo;
-import org.tassemble.circle.domain.dto.json.ObjWrapper;
+import org.tassemble.member.domain.CircleMemberRelation;
+import org.tassemble.member.domain.Member;
+import org.tassemble.member.service.CircleMemberRelationService;
+import org.tassemble.member.service.MemberService;
 
 import com.game.base.commons.utils.collection.FieldComparator;
+import com.game.base.commons.utils.sql.SqlBuilder;
 import com.game.base.commons.utils.text.JsonUtils;
 import com.game.bomb.Dao.UserDao;
 import com.game.bomb.Dao.UserMeta;
@@ -58,7 +62,7 @@ import com.game.core.exception.BombException;
 import com.game.core.exception.MessageNullException;
 import com.game.core.exception.NoAuthenticationException;
 import com.game.core.utils.CellLocker;
-import com.game.utils.GsonUtils;
+import com.game.utils.CommonUtils;
 import com.game.utils.HttpClientUtils;
 import com.google.common.collect.Lists;
 import com.google.gson.reflect.TypeToken;
@@ -69,6 +73,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.sun.tools.internal.ws.processor.modeler.annotation.MemberInfo;
 
 @Component
 public class CommonProcessor implements ActionAnotationProcessor {
@@ -603,7 +608,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	
 	
 	private void updateMemberMetaItem(JSONObject json, String key) {
-		String updatedValue = GsonUtils.toJson(json);
+		String updatedValue = CommonUtils.toJson(json);
 
 		OnlineUserDto onlineUser = GameMemory.getUser();
 		UserMeta userMeta = userMetaDao.getFirstOneByCondition("user_id = ? and user_key = ?",
@@ -662,6 +667,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	@ActionAnnotation(action = "queryPeopleAroundMe")
     public Map<String, Object> queryPeopleAroundMe(Object message, Map<String, Object> map) throws Exception {
 	    map.put("action", "queryPeopleAroundMe");
+	    final Long uid = GameMemory.getUser().getId();
 	    
 	    HashMap<Object, Object> parameters = mapper.readValue(String.valueOf(message), HashMap.class);
 	    
@@ -681,11 +687,11 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	   
 	    
 	    DBObject iLocationQuery = new BasicDBObject();
-	    iLocationQuery.put("member_id", GameMemory.getUser().getId());
+	    iLocationQuery.put("memberInfo.memberId", uid);
 	    DBObject dbResult = getDefaultCollection().findOne(iLocationQuery);
-	    CirclePointWriteMode point = null;
+	    CirclePointDto point = null;
 	    if (dbResult != null) {
-	        point = GsonUtils.getFromJson(dbResult.toString(), CirclePointWriteMode.class);
+	        point = CommonUtils.getFromJson(dbResult.toString(), CirclePointDto.class);
 	    }
 	    
 	    if (point == null || point.getCoordinate() == null 
@@ -701,7 +707,8 @@ public class CommonProcessor implements ActionAnotationProcessor {
         dbObject.put("geoNear", "location");
         dbObject.put("near", Arrays.asList(point.getCoordinate().getLongitude(), point.getCoordinate().getLatitude()));
         dbObject.put("spherical", "true");
-        dbObject.put("maxDistance", meter / 1000 / 6371);
+        dbObject.put("maxDistance", meter / 6371000);
+        dbObject.put("num", 300);
         dbObject.put("distanceMultiplier", 6371000);
         
         
@@ -716,15 +723,15 @@ public class CommonProcessor implements ActionAnotationProcessor {
         }
         
         
-        List<CirclePointReadMode> points = GsonUtils.fromJson(results, new TypeToken<List<CirclePointReadMode>>(){}.getType());
-        List<CirclePointWriteMode> writeModePoints = new ArrayList<CirclePointWriteMode>();
+        List<CirclePointReadMode> points = CommonUtils.fromJson(results, new TypeToken<List<CirclePointReadMode>>(){}.getType());
+        List<CirclePointDto> pointsList = new ArrayList<CirclePointDto>();
         
        
         
         if (CollectionUtils.isNotEmpty(points)) {
             for (CirclePointReadMode circlePointReadMode : points) {
-                CirclePointWriteMode writeModePoint = new CirclePointWriteMode(circlePointReadMode);
-                writeModePoints.add(writeModePoint);
+                CirclePointDto writeModePoint = new CirclePointDto(circlePointReadMode);
+                pointsList.add(writeModePoint);
             }
             //point.getCoordinate().getLongitude(), point.getCoordinate().getLatitude()
             
@@ -737,9 +744,19 @@ public class CommonProcessor implements ActionAnotationProcessor {
             double x1 = longitude;
             
 //            circlePoint 
-            for (Iterator<CirclePointWriteMode> iter = writeModePoints.iterator();iter.hasNext();) {
+            for (Iterator<CirclePointDto> iter = pointsList.iterator();iter.hasNext();) {
                 try {
-                    CirclePointWriteMode circlePoint = iter.next();
+                    CirclePointDto circlePoint = iter.next();
+                    
+                    if (circlePoint.getMemberInfo() != null) {
+                        if (uid.equals(circlePoint.getMemberInfo().getMemberId())) {
+                            
+                            map.put("me", circlePoint);
+                            iter.remove();//self
+                            continue;
+                        }
+                    }
+                    
                     //k > 0  第一第三象限 如果y点比中心点的y大 则 为第一象限，否则是第三象限
                     //k < 0 第二第四象限  如果y点比中心点的y大 则 为第二象限，否则是第四象限
                     //x1 - x2 = 0 x轴  如果y点比中心点的y大 则为x轴第一象限  否则为x轴第三象限
@@ -787,10 +804,37 @@ public class CommonProcessor implements ActionAnotationProcessor {
         }
         
         
+        if (CollectionUtils.isNotEmpty(pointsList)) {
+            List<Long> memberIds = new ArrayList<Long>();
+            for (CirclePointDto circlePointDto : pointsList) {
+                memberIds.add(circlePointDto.getMemberInfo().getMemberId());
+            }
+            
+            List<Member> members = MemberService.getByIdList(memberIds);
+            Map<Long, Member> mapping = CommonUtils.makeMapByProperty(members, "id");
+            for (CirclePointDto pointDto : pointsList) {
+                Member m = mapping.get(pointDto.getMemberInfo().getMemberId());
+                pointDto.getMemberInfo().setNickname(m.getNickname());
+            }
+            
+            List<CircleMemberRelation> relations = 
+                    CircleMemberRelationService.getByCondition("self_id = ? and " +SqlBuilder.inSql("partner_id", memberIds), uid);
+            if (CollectionUtils.isNotEmpty(relations)) {
+                Map<Long, CircleMemberRelation> relatoinMapping = CommonUtils.makeMapByProperty(relations, "partnerId");
+                for (CirclePointDto pointDto : pointsList) {
+                    CircleMemberRelation relation = relatoinMapping.get(pointDto.getMemberInfo().getMemberId());
+                    pointDto.setColor(relation.getRelativeColor());
+                }
+            }
+        }
         
-        map.put("pointsList", writeModePoints);
+        
+        map.put("pointsList", pointsList);
 	    return map;
 	}
+	
+	@Autowired
+	CircleMemberRelationService CircleMemberRelationService;
 
 	
 	@ActionAnnotation(action = "uploadGeoInfo")
@@ -834,12 +878,18 @@ public class CommonProcessor implements ActionAnotationProcessor {
 
 
 
+	
+	@Autowired
+	MemberService MemberService;
 
     private void updateUserLocation(Long uid, Object longitudeObj, Object latitudeObj) {
         double longitude = Double.valueOf(String.valueOf(longitudeObj));
         double latitude = Double.valueOf(String.valueOf(latitudeObj));
         DBObject query = new BasicDBObject();
-        query.put("member_id", uid);
+        query.put("memberId", uid);
+        
+        
+        Member member = MemberService.getById(uid);
         
         DBCursor cursor = getDefaultCollection().find(query);
         if (cursor.iterator().hasNext()) {
@@ -853,7 +903,11 @@ public class CommonProcessor implements ActionAnotationProcessor {
             coordinate.put("latitude", latitude);
             
             object.put("coordinate", coordinate);
-            object.put("member_id", uid);
+            
+            DBObject memberInfo = new BasicDBObject();
+            memberInfo.put("memberId", uid);
+            memberInfo.put("sex", member.getSex());
+            object.put("memberInfo", memberInfo);
             getDefaultCollection().update(query, object);
         } else {
             DBObject object = new BasicDBObject();
@@ -861,8 +915,18 @@ public class CommonProcessor implements ActionAnotationProcessor {
             coordinate.put("longitude", longitude);
             coordinate.put("latitude", latitude);
             
+            
+            DBObject memberInfo = new BasicDBObject();
+            memberInfo.put("memberId", uid);
+            memberInfo.put("sex", member.getSex());
+            
             object.put("coordinate", coordinate);
-            object.put("member_id",GameMemory.getUser().getId());
+            object.put("memberInfo", memberInfo);
+            
+            
+            
+            
+            
             getDefaultCollection().insert(object);
         }
     }
@@ -911,31 +975,12 @@ public class CommonProcessor implements ActionAnotationProcessor {
 //		System.out.println(o.get("a"));
 		
 		
-		String result = "[ { \"dis\" : 0.0 , \"obj\" : { \"_id\" : { \"$oid\" : \"53d27fd54c1d595d710efe28\"} , \"coordinate\" : { \"longitude\" : 121.4915 , \"latitude\" : 31.25933} , \"memberInfo\":{\"memberId\":1224212}, \"member_id\" : 12345555 , \"name\" : \"ahua\"}} , { \"dis\" : 0.0 , \"obj\" : { \"_id\" : { \"$oid\" : \"53d52bd30364593b434f093c\"} , \"coordinate\" : { \"longitude\" : 121.4915 , \"latitude\" : 31.25933}}} , { \"dis\" : 0.0 , \"obj\" : { \"_id\" : { \"$oid\" : \"53d583d40364f07fee5aad21\"} , \"coordinate\" : { \"longitude\" : 121.4915 , \"latitude\" : 31.25933} , \"member_id\" : 891027}} , { \"dis\" : 2135258.5638059005 , \"obj\" : { \"_id\" : { \"$oid\" : \"53d282154c1d595d710efe29\"} , \"coordinate\" : { \"longitude\" : 100.4915 , \"latitude\" : 40.25933} , \"member_id\" : 12345 , \"name\" : \"ahua\"}}]";
-		
-		result = StringUtils.replace(result, " ", "");
-		List<CirclePointWriteMode> points = GsonUtils.fromJson(result, new TypeToken<List<CirclePointWriteMode>>(){}.getType());
-		
-		CirclePointWriteMode point = new CirclePointWriteMode();
-		
-		Coordinate coordinate = new Coordinate();
-		coordinate.setLatitude(123.23D);
-		coordinate.setLongitude(122.234D);
-		point.setCoordinate(coordinate);
+		String result = "{ \"_id\" : { \"$oid\" : \"53d6641003648388c3456de9\"} , \"coordinate\" : { \"longitude\" : 130.4915 , \"latitude\" : 36.23333933} , \"memberInfo\" : { \"memberId\" : 891027 , \"sex\" : 1}}";
 		
 		
-		point.setDis(232.234d);
-		
-		MemberInfo info = new MemberInfo();
-		info.setMemberId(1224212L);
-		point.setMemberInfo(info);
-		System.out.println(GsonUtils.toJson(point));
-		
-		
-		List<CirclePointWriteMode> newPpoints = GsonUtils.fromJson(GsonUtils.toJson(Arrays.asList(point)), new TypeToken<List<CirclePointWriteMode>>(){}.getType());
+		CirclePointDto point = CommonUtils.getFromJson(result, CirclePointDto.class);
 		System.out.println(result);
-		System.out.println(GsonUtils.toJson(newPpoints));
-		System.out.println(GsonUtils.toJson(points));
+		System.out.println(CommonUtils.toJson(point));
 	}
 	
 	

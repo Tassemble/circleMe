@@ -1,9 +1,16 @@
 package org.tassemble.circle.domain.dto.json;
-public class MemberInfo {
 
+import com.google.gson.annotations.SerializedName;
+
+public class MemberInfoDto {
+
+    
     Long    memberId;
-    String  nickname;
+    
+    private String nickname;
     Integer sex;
+    
+    
 
     public Long getMemberId() {
         return memberId;
@@ -13,13 +20,6 @@ public class MemberInfo {
         this.memberId = memberId;
     }
 
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
 
     public Integer getSex() {
         return sex;
@@ -27,6 +27,14 @@ public class MemberInfo {
 
     public void setSex(Integer sex) {
         this.sex = sex;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
 }
