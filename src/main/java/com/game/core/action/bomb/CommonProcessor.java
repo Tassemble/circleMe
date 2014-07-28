@@ -27,10 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.tassemble.circle.domain.dto.json.MemberInfoDto;
-import org.tassemble.circle.domain.dto.json.CirclePointReadMode;
 import org.tassemble.circle.domain.dto.json.CirclePointDto;
-import org.tassemble.circle.domain.dto.json.Coordinate;
+import org.tassemble.circle.domain.dto.json.CirclePointReadMode;
 import org.tassemble.member.domain.CircleMemberRelation;
 import org.tassemble.member.domain.Member;
 import org.tassemble.member.service.CircleMemberRelationService;
@@ -73,7 +71,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.sun.tools.internal.ws.processor.modeler.annotation.MemberInfo;
 
 @Component
 public class CommonProcessor implements ActionAnotationProcessor {
