@@ -657,6 +657,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	@ActionAnnotation(action = "queryPeopleAroundMe")
     public Map<String, Object> queryPeopleAroundMe(Object message, Map<String, Object> map) throws Exception {
 	    map.put("action", "queryPeopleAroundMe");
+	    map.put("code", 200);
 	    final Long uid = GameMemory.getUser().getId();
 	    
 	    HashMap<Object, Object> parameters = mapper.readValue(String.valueOf(message), HashMap.class);
