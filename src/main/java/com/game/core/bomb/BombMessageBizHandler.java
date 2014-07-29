@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.tassemble.circle.logic.MongoGeoLogic;
 
 import com.game.core.GameMemory;
 import com.game.core.action.processor.ActionAnotationProcessor;
@@ -31,7 +32,6 @@ import com.game.core.bomb.dto.OnlineUserDto;
 import com.game.core.bomb.dto.ReturnConstant;
 import com.game.core.bomb.dto.ReturnDto;
 import com.game.core.bomb.logic.RoomLogic;
-import com.game.core.bomb.play.dto.PlayRoomDto;
 import com.game.core.exception.BombException;
 import com.game.core.utils.CellLocker;
 import com.game.utils.CommonUtils;
@@ -50,6 +50,9 @@ public class BombMessageBizHandler implements BombMessageHandler{
 
 	private static final Logger	LOG	= LoggerFactory.getLogger(BombMessageBizHandler.class);
 
+	@Autowired
+	MongoGeoLogic MongoGeoLogic;
+	
 	@Autowired
 	CellLocker<List<String>>	locker;
 
@@ -80,12 +83,11 @@ public class BombMessageBizHandler implements BombMessageHandler{
 		if (user == null) {
 			return;
 		}
-		PlayRoomDto room = GameMemory.getRoomByRoomId(user.getRoomId());
-		if (room != null) {
-			roomLogic.doUserQuit(room, user.getId());
-		}
 		GameMemory.ONLINE_USERS.remove(user.getId());
 		GameMemory.removeSessionUserByKey(session.getId());
+		
+		//change live status
+		MongoGeoLogic.closingALive(user.getId());
 	}
 
 	@Override

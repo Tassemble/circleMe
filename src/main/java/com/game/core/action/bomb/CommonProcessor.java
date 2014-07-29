@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.tassemble.circle.domain.dto.json.CirclePointDto;
 import org.tassemble.circle.domain.dto.json.CirclePointReadMode;
+import org.tassemble.circle.logic.MongoGeoLogic;
 import org.tassemble.member.domain.CircleMemberRelation;
 import org.tassemble.member.domain.Member;
 import org.tassemble.member.service.CircleMemberRelationService;
@@ -70,7 +71,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 
 @Component
 public class CommonProcessor implements ActionAnotationProcessor {
@@ -114,10 +114,6 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	
 	@Autowired
 	UserDao userDao;
-	
-	
-	@Autowired
-    MongoClient mongoClient;
 	
 	
 	
@@ -647,18 +643,15 @@ public class CommonProcessor implements ActionAnotationProcessor {
 	
 	
 	public DBCollection getDefaultCollection() {
-	    DB db = getDefaultDB();
-        DBCollection collction = db.getCollection("location");
-        
-        return collction;
+	    return MongoGeoLogic.getDefaultCollection();
 	}
 	
 	
+	@Autowired
+	MongoGeoLogic MongoGeoLogic;
 	
 	public DB getDefaultDB() {
-        DB db = mongoClient.getDB("aroundme");
-        
-        return db;
+	    return MongoGeoLogic.getDefaultDB();
     }
 	
 	@ActionAnnotation(action = "queryPeopleAroundMe")
@@ -707,6 +700,9 @@ public class CommonProcessor implements ActionAnotationProcessor {
         dbObject.put("maxDistance", meter / 6371000);
         dbObject.put("num", 300);
         dbObject.put("distanceMultiplier", 6371000);
+        DBObject queryObject = new BasicDBObject();
+        queryObject.put("memberInfo.live", true);
+        dbObject.put("query", queryObject);
         
         
 	    
@@ -883,13 +879,13 @@ public class CommonProcessor implements ActionAnotationProcessor {
         double longitude = Double.valueOf(String.valueOf(longitudeObj));
         double latitude = Double.valueOf(String.valueOf(latitudeObj));
         DBObject query = new BasicDBObject();
-        query.put("memberId", uid);
+        query.put("memberInfo.memberId", uid);
         
         
         Member member = MemberService.getById(uid);
         
         DBCursor cursor = getDefaultCollection().find(query);
-        if (cursor.iterator().hasNext()) {
+        if (cursor.hasNext()) {
             DBObject dbObject = cursor.next();
             if (dbObject == null) {
                 return;
@@ -904,6 +900,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
             DBObject memberInfo = new BasicDBObject();
             memberInfo.put("memberId", uid);
             memberInfo.put("sex", member.getSex());
+            memberInfo.put("live", true);
             object.put("memberInfo", memberInfo);
             getDefaultCollection().update(query, object);
         } else {
@@ -916,7 +913,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
             DBObject memberInfo = new BasicDBObject();
             memberInfo.put("memberId", uid);
             memberInfo.put("sex", member.getSex());
-            
+            memberInfo.put("live", true);
             object.put("coordinate", coordinate);
             object.put("memberInfo", memberInfo);
             
