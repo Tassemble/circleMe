@@ -721,6 +721,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
         
        
         
+        
         if (CollectionUtils.isNotEmpty(points)) {
             for (CirclePointReadMode circlePointReadMode : points) {
                 CirclePointDto writeModePoint = new CirclePointDto(circlePointReadMode);

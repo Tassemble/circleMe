@@ -17,6 +17,7 @@ import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.tassemble.circle.logic.MongoGeoLogic;
 import org.tassemble.member.domain.Member;
 import org.tassemble.member.service.MemberService;
 
@@ -62,6 +63,12 @@ public class AuthIoFilter extends IoFilterAdapter {
 	SinaWeiboService sinaWeiboService;
 
 	final boolean				isMock	= false;
+	
+	   
+    @Autowired
+    MongoGeoLogic mongoGeoLogic;
+
+    
 
 	@Override
 	public void messageReceived(NextFilter nextFilter, IoSession session, Object message) throws Exception {
@@ -149,8 +156,13 @@ public class AuthIoFilter extends IoFilterAdapter {
 					LOG.info("validate ok for username:" + dto.getUsername());
 					GameMemory.ONLINE_USERS.put(dto.getId(), dto);
 					GameMemory.SESSION_USERS.put(jsonSession.getId(), dto);
-					GameMemory.setUser(user);
+					GameMemory.setUser(dto);
 
+					
+					//callback for updater
+					processAfterLogin();
+					
+					
 					jsonSession.write(new ReturnDto(200, action, "logon successfully"));
 					return;
 				}
@@ -190,7 +202,20 @@ public class AuthIoFilter extends IoFilterAdapter {
 
 
 
-	public OnlineUserDto login(String message, String loginType) {
+	
+	private void processAfterLogin() {
+        // TODO Auto-generated method stub
+        
+	    Long uid = GameMemory.getUser().getId();
+	    
+	    
+	    mongoGeoLogic.becomeALive(uid);;
+	    
+    }
+
+
+
+    public OnlineUserDto login(String message, String loginType) {
 		JSONObject json = JSONObject.fromObject(message);
 		String action = json.getString("action");
 		if (LoginConstant.LOGIN_TYPE_DEFAULT.equals(loginType)) {

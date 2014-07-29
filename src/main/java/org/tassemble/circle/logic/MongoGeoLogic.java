@@ -34,22 +34,20 @@ public class MongoGeoLogic {
         
         DBObject object = new BasicDBObject();
         DBObject memberInfo = new BasicDBObject();
-        memberInfo.put("live", false);
-        object.put("memberInfo", memberInfo);
+        memberInfo.put("memberInfo.live", false);
+        object.put("$set", memberInfo);
         getDefaultCollection().update(iLocationQuery, object);
     }
     
     
     public void becomeALive(Long uid) {
-        
         DBObject iLocationQuery = new BasicDBObject();
         iLocationQuery.put("memberInfo.memberId", uid);
         //update
-        
         DBObject object = new BasicDBObject();
         DBObject memberInfo = new BasicDBObject();
-        memberInfo.put("live", true);
-        object.put("memberInfo", memberInfo);
+        memberInfo.put("memberInfo.live", true);
+        object.put("$set", memberInfo);
         getDefaultCollection().update(iLocationQuery, object);
     }
     
