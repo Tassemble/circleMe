@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import com.game.base.commons.utils.text.NeteaseEduStringUtils;
 
 /*
- * @author hzfjd@corp.netease.com
+ * @author hzfjd@
  * @date 2012-5-8
  */
 public class ReflectionUtils {

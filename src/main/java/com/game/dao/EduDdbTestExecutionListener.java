@@ -10,7 +10,7 @@ import com.game.base.commons.service.aop.EduTransactionAdvice;
 import com.netease.dbsupport.transaction.IDBTransactionManager;
 
 /*
- * @author hzfjd@corp.netease.com
+ * @author hzfjd@
  * @date 2012-5-3
  */
 public class EduDdbTestExecutionListener extends AbstractTestExecutionListener {

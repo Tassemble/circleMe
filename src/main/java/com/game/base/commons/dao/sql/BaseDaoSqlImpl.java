@@ -46,7 +46,7 @@ import com.netease.framework.dbsupport.SqlManager;
 import com.netease.framework.dbsupport.impl.DBResource;
 
 /**
- * @author hzfjd@corp.netease.com
+ * @author hzfjd@
  */
 
 public class BaseDaoSqlImpl<DomainObject> extends

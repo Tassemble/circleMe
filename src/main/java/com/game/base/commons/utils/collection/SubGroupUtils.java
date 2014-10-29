@@ -12,7 +12,7 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import com.game.base.commons.utils.reflection.ReflectionUtils;
 
 /*
- * @author hzfjd@corp.netease.com
+ * @author hzfjd@
  * @date 2012-5-8
  */
 public class SubGroupUtils {

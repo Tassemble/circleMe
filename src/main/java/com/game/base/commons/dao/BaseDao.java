@@ -9,7 +9,7 @@ import com.netease.framework.dao.DomainObjectDao;
 import com.netease.framework.dao.sql.ListCondition;
 
 /**
- * @author hzfjd@corp.netease.com
+ * @author hzfjd@
  * @param <DomainObject>
  */
 public interface BaseDao<DomainObject> extends DomainObjectDao<DomainObject> {

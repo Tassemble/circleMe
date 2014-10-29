@@ -10,7 +10,7 @@ import com.game.base.commons.utils.collection.PaginationResult;
 import com.netease.framework.dao.sql.ListCondition;
 
 /**
- * @author hzfjd@corp.netease.com
+ * @author hzfjd@
  * @param <D>
  * @param <T>
  */

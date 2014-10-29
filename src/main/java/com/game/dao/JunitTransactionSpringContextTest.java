@@ -4,7 +4,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /*
- * @author hzfjd@corp.netease.com
+ * @author hzfjd@
  * @date 2012-10-17
  */
 @TestExecutionListeners({ EduDdbTestExecutionListener.class })

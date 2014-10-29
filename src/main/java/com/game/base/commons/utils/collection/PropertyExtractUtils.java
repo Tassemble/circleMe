@@ -9,7 +9,7 @@ import org.apache.commons.collections.CollectionUtils;
 import com.game.base.commons.utils.reflection.ReflectionUtils;
 
 /*
- * @author rongxz@corp.netease.com
+ * @author rongxz@
  * @date 2012-8-2
  */
 public class PropertyExtractUtils {

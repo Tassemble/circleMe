@@ -862,7 +862,7 @@ public class CommonProcessor implements ActionAnotationProcessor {
         Object latitudeObj = parameters.get("latitude");
         
         if (longitudeObj == null || latitudeObj == null) {
-            throw new BombException(-1, "one of them[longitude, latitude] is null, please check");
+            throw new BombException(-2002, "one of them[longitude, latitude] is null, please check");
         }
         
         
