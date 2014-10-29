@@ -8,7 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import com.netease.dbsupport.transaction.IDBTransactionManager;
 
 /*
- * @author hzfjd@
+ * @author 
  * @date 2012-5-3
  */
 public class EduTransactionAdvice implements MethodInterceptor {

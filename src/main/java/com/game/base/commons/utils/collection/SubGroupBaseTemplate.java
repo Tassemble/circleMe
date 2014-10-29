@@ -15,7 +15,7 @@ import com.game.base.commons.utils.reflection.ReflectionUtils;
 import com.game.base.commons.utils.text.JsonUtils;
 
 /*
- * @author hzfjd@
+ * @author 
  * @date 2012-5-11
  */
 public class SubGroupBaseTemplate {

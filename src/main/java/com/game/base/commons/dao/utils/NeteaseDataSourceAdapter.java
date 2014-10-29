@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
 import com.netease.dbsupport.impl.ConnectionManagerDDBImpl;
 
 /**
- * hzfjd@
+ * 
  * 
  * @author owner
  * 
