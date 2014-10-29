@@ -168,7 +168,7 @@ public class BlogPostTest extends BaseTestCase {
 			User user = new User();
 			user.setId(userDao.getId());
 			user.setDisplayName(entry.getValue());
-			user.setUserEmail("wx520_wx520@163.com");
+			user.setUserEmail("wx520_wx520");
 			user.setUserLogin(entry.getKey());
 			user.setUserNicename(entry.getValue());
 			user.setUserPass(DigestUtils.md5Hex("wx520__wx520"));
